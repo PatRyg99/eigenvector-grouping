@@ -25,8 +25,8 @@ class TrainSegmentatorConfig:
     seed: int = 0
 
     # Paths
-    input_dir: str = "input"
-    output_dir: str = "output"
+    input_dir: str = ".data/input"
+    output_dir: str = ".data/output"
 
     # Data
     size: int = 20_000

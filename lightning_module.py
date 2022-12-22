@@ -1,4 +1,5 @@
 import os
+from dataclasses import asdict
 
 import numpy as np
 
@@ -13,10 +14,7 @@ from monai.transforms import Compose, LoadImaged
 
 from src.metrics.confusion_matrix import ConfusionMatrix
 from src.transforms.transforms import (
-    DeleteChannelsd, 
     PointcloudRandomSubsampled, 
-    PointcloudRandomAffined, 
-    PointcloudRandomJitterd, 
     ExtractSegmentationLabeld, 
     ToFloatTensord
 )
@@ -36,6 +34,7 @@ class SegmentatorModule(pl.LightningModule):
 
         self.size = config.size
         self.input_dir = config.input_dir
+        self.bs = config.batch_size
         self.optimizer = config.optimizer
         self.epochs = config.epochs
         self.num_workers = config.num_workers
@@ -50,30 +49,19 @@ class SegmentatorModule(pl.LightningModule):
         train_names = os.listdir(os.path.join(self.input_dir, "train"))
         val_names = os.listdir(os.path.join(self.input_dir, "valid"))
 
-        train_dict = [{"input": os.path.join(self.input_dir, train_name)} for train_name in train_names]
-        val_dict = [{"input": os.path.join(self.input_dir, val_name)} for val_name in val_names]
+        train_dict = [{"input": os.path.join(self.input_dir, "train", train_name)} for train_name in train_names]
+        val_dict = [{"input": os.path.join(self.input_dir, "valid", val_name)} for val_name in val_names]
 
         # Transforms
         train_transforms = Compose([
             LoadImaged(keys=["input"], reader="NumpyReader"),
-            DeleteChannelsd(keys=["input"], channels=[3]),
-            # Augmentation
             PointcloudRandomSubsampled(keys=["input"], sub_size=self.size),
-            PointcloudRandomAffined(
-                keys=["input"],
-                prob=1.0,
-                rotate_range=[np.pi / 6, np.pi / 6, np.pi / 6],
-                translate_range=[0.01, 0.01, 0.01],
-            ),
-            PointcloudRandomJitterd(keys=["input"], std=0.0002),
-            # Prepare for training
             ExtractSegmentationLabeld(pcd_key="input"),
             ToFloatTensord(keys=["input", "label"])
         ])
 
         valid_transforms = Compose([
             LoadImaged(keys=["input"], reader="NumpyReader"),
-            DeleteChannelsd(keys=["input"], channels=[3]),
             PointcloudRandomSubsampled(keys=["input"], sub_size=self.size),
             ExtractSegmentationLabeld(pcd_key="input"),
             ToFloatTensord(keys=["input", "label"]),
@@ -160,5 +148,5 @@ class SegmentatorModule(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), self.lr)
+        optimizer = torch.optim.Adam(self.parameters(), **asdict(self.optimizer.hyperparams))
         return optimizer
