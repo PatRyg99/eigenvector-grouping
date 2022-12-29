@@ -1,7 +1,7 @@
 # Eigenvector Grouping
 This repository contains code implementation for the paper: "Eigenvector Grouping for Point Cloud Vessel Labeling" from the Geometric Deep Learning in Medical Imaging (GeoMedIA) 2022 Workshop.
 
-Link to the paper: https://openreview.net/forum?id=leroKD5uuNf
+Link to the paper: https://proceedings.mlr.press/v194/rygiel22a.html
 
 # Introduction
 In this work a novel point gruping technique called Eigenvector Grouping is introduced to tackle a problem of labeling vessels in voxel-based vessel segmentation. The tasks aims to filter out artefact vessels and correctly detect disconnected branches of vessels of interest. 
