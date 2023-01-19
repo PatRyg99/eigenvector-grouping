@@ -1,3 +1,5 @@
+import os
+
 from dataclasses import dataclass
 from torch.optim import Adam
 
@@ -25,8 +27,8 @@ class TrainSegmentatorConfig:
     seed: int = 0
 
     # Paths
-    input_dir: str = ".data/input"
-    output_dir: str = ".data/output"
+    input_dir: str = os.path.join(".data", "input")
+    output_dir: str = os.path.join(".data", "output")
 
     # Data
     size: int = 20_000

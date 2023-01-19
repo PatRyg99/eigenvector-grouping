@@ -1,10 +1,10 @@
 import torch
 from torchmetrics.classification.confusion_matrix import (
-    ConfusionMatrix as TorchConfusionMatrix,
+    MulticlassConfusionMatrix as TorchMulticlassConfusionMatrix,
 )
 
 
-class ConfusionMatrix(TorchConfusionMatrix):
+class ConfusionMatrix(TorchMulticlassConfusionMatrix):
     def __call__(self, pred: torch.Tensor, label: torch.Tensor):
         values = super().__call__(pred.flatten(), label.flatten())
         self.TN = values[0, 0]

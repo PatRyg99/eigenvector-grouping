@@ -17,7 +17,7 @@ def train():
     np.random.seed(config.seed)
 
     # Init out directories
-    ct = datetime.datetime.now().strftime("%m-%d-%Y.%H:%M:%S")
+    ct = datetime.datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
     logs_path = os.path.join(config.output_dir, ct, "logs")
     checkpoint_path = os.path.join(config.output_dir, ct, "checkpoint")
 
